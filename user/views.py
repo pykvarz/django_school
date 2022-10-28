@@ -51,18 +51,19 @@ class TeacherListView(ListView):
 
 class TeacherProfileDetailView(DetailView):
 	model = User
-	template_name = "templates/teacher_profile"
+	template_name = "templates/teacher_profile.html"
+	context_object_name = "teacher"
 
-	def get_context_data(self, **kwargs):
-		context = super(TeacherProfileDetailView, self).get_context_data(**kwargs)
-		context["my_profile"] = User.objects.filter(user_id=self.object.pk).select_related("Teacher")
+	# def get_context_data(self, **kwargs):
+	# 	context = super(TeacherProfileDetailView, self).get_context_data(**kwargs)
+	# 	context["my_profile"] = User.objects.filter(pk=self.object.pk).select_related("Teacher")
 
 	def get_object(self, queryset=None):
-		return get_object_or_404(User, id=self.request.user.id)
+		return get_object_or_404(User, pk=self.request.user.id)
 
-	@never_cache
-	def dispatch(self, *args, **kwargs):
-		return super(TeacherProfileDetailView, self).dispatch(*args, **kwargs)
+	# @never_cache
+	# def dispatch(self, *args, **kwargs):
+	# 	return super(TeacherProfileDetailView, self).dispatch(*args, **kwargs)
 
 
 class StudentMainMenu(TemplateView):
