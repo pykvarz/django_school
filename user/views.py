@@ -1,5 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, get_object_or_404
+from django.views.decorators.cache import never_cache
 from django.views.generic import CreateView, TemplateView, ListView, DetailView
 from django.contrib.auth import login
 from django.shortcuts import redirect
@@ -8,7 +10,7 @@ from .forms import StudentSignUpForm, TeacherSignupForm
 from .models import User, Student, Teacher
 
 
-class StudentSignUpView(CreateView):
+class StudentSignUpView(LoginRequiredMixin, CreateView):
 	model = User
 	form_class = StudentSignUpForm
 	template_name = 'registration/student_register.html'
@@ -55,6 +57,13 @@ class TeacherProfileDetailView(DetailView):
 		context = super(TeacherProfileDetailView, self).get_context_data(**kwargs)
 		context["my_profile"] = User.objects.filter(user_id=self.object.pk).select_related("Teacher")
 
+	def get_object(self, queryset=None):
+		return get_object_or_404(User, id=self.request.user.id)
+
+	@never_cache
+	def dispatch(self, *args, **kwargs):
+		return super(TeacherProfileDetailView, self).dispatch(*args, **kwargs)
+
 
 class StudentMainMenu(TemplateView):
 	template_name = "templates/student_main_menu.html"
@@ -62,6 +71,7 @@ class StudentMainMenu(TemplateView):
 
 class TeacherMainMenu(TemplateView):
 	template_name = "templates/teacher_main_menu.html"
+
 
 
 # @login_required
