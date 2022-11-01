@@ -1,7 +1,6 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
-from django.views.decorators.cache import never_cache
+
 from django.views.generic import CreateView, TemplateView, ListView, DetailView
 from django.contrib.auth import login
 from django.shortcuts import redirect
@@ -61,9 +60,9 @@ class TeacherProfileDetailView(DetailView):
 	def get_object(self, queryset=None):
 		return get_object_or_404(User, pk=self.request.user.id)
 
-	# @never_cache
-	# def dispatch(self, *args, **kwargs):
-	# 	return super(TeacherProfileDetailView, self).dispatch(*args, **kwargs)
+# @never_cache
+# def dispatch(self, *args, **kwargs):
+# 	return super(TeacherProfileDetailView, self).dispatch(*args, **kwargs)
 
 
 class StudentMainMenu(TemplateView):
@@ -74,9 +73,20 @@ class TeacherMainMenu(TemplateView):
 	template_name = "templates/teacher_main_menu.html"
 
 
-
 # @login_required
 # def get_request_teacher_profile(request):
 # 	teacher = Teacher.objects.filter(user_id=request.user.id)
 # 	# profile = ProfileEmployee.objects.filter(employee_id=request.user.id)
 # 	return render(request, "templates/teacher_profile.html", context={"teacher": teacher})
+
+
+def register(request):
+	if request.method == "POST":
+		user_form = TeacherSignupForm(request.POST)
+		if user_form.is_valid():
+			new_user = user_form.save()
+			new_user.save()
+			return render(request, "templates/teacher_main_menu.html", {"new_user": new_user})
+	else:
+		user_form = TeacherSignupForm()
+	return render(request, "registration/teacher_register.html", {'form': user_form})

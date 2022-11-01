@@ -1,9 +1,11 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 
 from user.models import User, Student, Teacher
 
 from user.helpers.last_id import get_last_id_student, get_last_id_teacher
+from django.contrib.auth.hashers import make_password
 
 
 class StudentSignUpForm(forms.ModelForm):
@@ -17,7 +19,7 @@ class StudentSignUpForm(forms.ModelForm):
     def save(self):
         user = super().save(commit=False)
         user.username = f"s130t{get_last_id_student()}"
-        user.password = User.objects.make_random_password()
+        user.password = make_password("")
         user.is_student = True
         user.save()
         student = Student.objects.create(
@@ -32,13 +34,13 @@ class TeacherSignupForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name')
+        fields = ('first_name', 'last_name', 'password')
 
     @transaction.atomic
     def save(self):
         user = super().save(commit=False)
         user.username = f"s130t{get_last_id_teacher()}"
-        user.password = User.objects.make_random_password()
+        # user.password = user.password = make_password("")
         user.is_teacher = True
         user.save()
         student = Teacher.objects.create(

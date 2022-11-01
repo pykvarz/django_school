@@ -1,7 +1,7 @@
 from django.contrib.auth.views import LoginView
 from django.urls import path
 
-from user.views import StudentSignUpView, StudentMainMenu, TeacherMainMenu, TeacherSignUpView, TeacherProfileDetailView
+from user.views import StudentSignUpView, StudentMainMenu, TeacherMainMenu, TeacherSignUpView, TeacherProfileDetailView, register
 
 urlpatterns = [
 	path("student/signup/", StudentSignUpView.as_view(), name="student_signup"),
@@ -9,5 +9,5 @@ urlpatterns = [
 	path("teacher/signup/", TeacherSignUpView.as_view(), name="teacher_signup"),
 	path("teacher/main_menu/", TeacherMainMenu.as_view(), name="teacher_main_menu"),
 	path("teacher/my_profile/", TeacherProfileDetailView.as_view(), name="my_profile_teacher"),
-	path("login/", LoginView.as_view(), name="login")
+	path("register/", register, name="register"),
 ]
